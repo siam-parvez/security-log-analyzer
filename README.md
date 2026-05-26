@@ -23,7 +23,7 @@ cd security-log-analyzer
 ```
 
 
-# No additional dependencies required (uses Python standard library)
+## No additional dependencies required (uses Python standard library)
 
 
 ## Usage
