@@ -28,33 +28,20 @@ cd security-log-analyzer
 
 ## Usage
 
-# Text output (terminal)
+### Text output (terminal)
 python3 log_analyzer.py --file sample.log
 
-# Text output (file)
+### Text output (file)
 python3 log_analyzer.py --file sample.log --format text --output report.txt
 
-# JSON output
+### JSON output
 python3 log_analyzer.py --file sample.log --format json --output report.json
 
-# HTML output
+### HTML output
 python3 log_analyzer.py --file sample.log --format html --output report.html
 
-# Markdown output
+### Markdown output
 python3 log_analyzer.py --file sample.log --format md --output report.md
-
-# Text output
-python3 log_analyzer.py --file sample.log
-
-# JSON output
-python3 log_analyzer.py --file sample.log --format json --output report.json
-
-# HTML output
-python3 log_analyzer.py --file sample.log --format html --output report.html
-
-# Markdown output
-python3 log_analyzer.py --file sample.log --format md --output report.md
-
 
 ## Example Output
 
