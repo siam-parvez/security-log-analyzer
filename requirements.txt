@@ -1,0 +1,10 @@
+# Security Log Analyzer - Requirements
+# No external dependencies - uses Python standard library only
+
+# Standard library modules used:
+# - re, json, argparse, datetime, pathlib, sys
+
+# Optional development dependencies (uncomment to install):
+# black==24.0.0
+# flake8==6.1.0
+# mypy==1.8.0

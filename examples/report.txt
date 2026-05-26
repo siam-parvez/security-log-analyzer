@@ -1,0 +1,52 @@
+
+============================================================
+SECURITY LOG ANALYSIS REPORT
+============================================================
+
+METADATA
+--------
+File: sample.log
+Analyzed: 2026-05-26T13:31:55.275093
+Total lines: 25
+
+SEVERITY SUMMARY
+----------------
+CRITICAL   :    3 ███
+ERROR      :    7 ███████
+WARNING    :    6 ██████
+INFO       :    8 ████████
+DEBUG      :    0 
+
+IP ADDRESSES FOUND
+-----------------
+Total unique IPs: 8
+  • 10.0.0.5
+  • 10.0.0.0
+  • 192.168.1.100
+  • 203.0.113.45
+  • 192.168.1.150
+  • 45.33.22.11
+  • 185.130.5.253
+  • 198.51.100.22
+
+SUSPICIOUS EVENTS
+-----------------
+  Line 2: password_spray
+    → 2026-05-26 08:17:45 ERROR Failed login attempt from 203.0.113.45 - user: unknown, password: admin123
+  Line 9: command_injection
+    → 2026-05-26 09:00:00 WARNING Suspicious command detected: cat /etc/passwd - from process: python3
+  Line 12: port_scan
+    → 2026-05-26 09:10:22 WARNING Port scan detected from 45.33.22.11 - 25 ports scanned in 3 seconds
+  Line 13: password_spray
+    → 2026-05-26 09:15:00 ERROR Failed login attempt from 45.33.22.11 - user: root, password: 123456
+  Line 19: xss_attempt
+    → 2026-05-26 09:45:12 WARNING XSS attempt detected - payload: <script>alert('XSS')</script>
+  Line 23: password_spray
+    → 2026-05-26 10:05:22 WARNING Brute force attack detected - 20 failed logins in 30s from 45.33.22.11
+
+SEVERITY SCORE
+--------------
+Total: 52 / 100
+Risk Level: HIGH
+
+============================================================

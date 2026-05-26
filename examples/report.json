@@ -1,0 +1,341 @@
+{
+  "metadata": {
+    "file": "sample.log",
+    "analyzed_at": "2026-05-26T13:31:08.378802",
+    "total_lines": 25,
+    "analyzer_version": "1.0.0"
+  },
+  "summary": {
+    "severity_counts": {
+      "CRITICAL": 3,
+      "ERROR": 7,
+      "WARNING": 6,
+      "INFO": 8,
+      "DEBUG": 0
+    },
+    "total_ips": 8,
+    "unique_ips": [
+      "203.0.113.45",
+      "185.130.5.253",
+      "198.51.100.22",
+      "45.33.22.11",
+      "10.0.0.0",
+      "192.168.1.150",
+      "10.0.0.5",
+      "192.168.1.100"
+    ],
+    "suspicious_events": [
+      {
+        "line": 2,
+        "patterns": [
+          "password_spray"
+        ],
+        "text": "2026-05-26 08:17:45 ERROR Failed login attempt from 203.0.113.45 - user: unknown, password: admin123"
+      },
+      {
+        "line": 9,
+        "patterns": [
+          "command_injection"
+        ],
+        "text": "2026-05-26 09:00:00 WARNING Suspicious command detected: cat /etc/passwd - from process: python3"
+      },
+      {
+        "line": 12,
+        "patterns": [
+          "port_scan"
+        ],
+        "text": "2026-05-26 09:10:22 WARNING Port scan detected from 45.33.22.11 - 25 ports scanned in 3 seconds"
+      },
+      {
+        "line": 13,
+        "patterns": [
+          "password_spray"
+        ],
+        "text": "2026-05-26 09:15:00 ERROR Failed login attempt from 45.33.22.11 - user: root, password: 123456"
+      },
+      {
+        "line": 19,
+        "patterns": [
+          "xss_attempt"
+        ],
+        "text": "2026-05-26 09:45:12 WARNING XSS attempt detected - payload: <script>alert('XSS')</script>"
+      },
+      {
+        "line": 23,
+        "patterns": [
+          "password_spray"
+        ],
+        "text": "2026-05-26 10:05:22 WARNING Brute force attack detected - 20 failed logins in 30s from 45.33.22.11"
+      }
+    ],
+    "severity_score_total": 52
+  },
+  "details": [
+    {
+      "line_number": 1,
+      "raw": "2026-05-26 08:15:32 INFO User login successful from 192.168.1.100 - user: admin@example.com",
+      "timestamp": "2026-05-26 08:15:32",
+      "severity": "INFO",
+      "severity_score": 1,
+      "ip_addresses": [
+        "192.168.1.100"
+      ],
+      "suspicious": []
+    },
+    {
+      "line_number": 2,
+      "raw": "2026-05-26 08:17:45 ERROR Failed login attempt from 203.0.113.45 - user: unknown, password: admin123",
+      "timestamp": "2026-05-26 08:17:45",
+      "severity": "ERROR",
+      "severity_score": 3,
+      "ip_addresses": [
+        "203.0.113.45"
+      ],
+      "suspicious": [
+        "password_spray"
+      ]
+    },
+    {
+      "line_number": 3,
+      "raw": "2026-05-26 08:18:02 WARNING Multiple failed attempts from 203.0.113.45 - 5 attempts in 60 seconds",
+      "timestamp": "2026-05-26 08:18:02",
+      "severity": "WARNING",
+      "severity_score": 2,
+      "ip_addresses": [
+        "203.0.113.45"
+      ],
+      "suspicious": []
+    },
+    {
+      "line_number": 4,
+      "raw": "2026-05-26 08:20:11 ERROR Database connection failed - timeout after 30s, pool size exhausted",
+      "timestamp": "2026-05-26 08:20:11",
+      "severity": "ERROR",
+      "severity_score": 3,
+      "ip_addresses": [],
+      "suspicious": []
+    },
+    {
+      "line_number": 5,
+      "raw": "2026-05-26 08:22:33 INFO Backup completed successfully - size: 2.4GB, duration: 45s",
+      "timestamp": "2026-05-26 08:22:33",
+      "severity": "INFO",
+      "severity_score": 1,
+      "ip_addresses": [],
+      "suspicious": []
+    },
+    {
+      "line_number": 6,
+      "raw": "2026-05-26 08:25:19 FAILED Authentication timeout from 198.51.100.22 - user: temp_user",
+      "timestamp": "2026-05-26 08:25:19",
+      "severity": "UNKNOWN",
+      "severity_score": -1,
+      "ip_addresses": [
+        "198.51.100.22"
+      ],
+      "suspicious": []
+    },
+    {
+      "line_number": 7,
+      "raw": "2026-05-26 08:30:00 CRITICAL Memory usage exceeds 90% - current: 94%, threshold: 90%",
+      "timestamp": "2026-05-26 08:30:00",
+      "severity": "CRITICAL",
+      "severity_score": 4,
+      "ip_addresses": [],
+      "suspicious": []
+    },
+    {
+      "line_number": 8,
+      "raw": "2026-05-26 08:35:44 INFO User logout from 192.168.1.100 - user: admin@example.com",
+      "timestamp": "2026-05-26 08:35:44",
+      "severity": "INFO",
+      "severity_score": 1,
+      "ip_addresses": [
+        "192.168.1.100"
+      ],
+      "suspicious": []
+    },
+    {
+      "line_number": 9,
+      "raw": "2026-05-26 09:00:00 WARNING Suspicious command detected: cat /etc/passwd - from process: python3",
+      "timestamp": "2026-05-26 09:00:00",
+      "severity": "WARNING",
+      "severity_score": 2,
+      "ip_addresses": [],
+      "suspicious": [
+        "command_injection"
+      ]
+    },
+    {
+      "line_number": 10,
+      "raw": "2026-05-26 09:01:15 ERROR Command execution failed: sudo rm -rf /tmp/* - permission denied",
+      "timestamp": "2026-05-26 09:01:15",
+      "severity": "ERROR",
+      "severity_score": 3,
+      "ip_addresses": [],
+      "suspicious": []
+    },
+    {
+      "line_number": 11,
+      "raw": "2026-05-26 09:05:30 INFO Connection established from 10.0.0.5 - protocol: SSH, version: 2.0",
+      "timestamp": "2026-05-26 09:05:30",
+      "severity": "INFO",
+      "severity_score": 1,
+      "ip_addresses": [
+        "10.0.0.5"
+      ],
+      "suspicious": []
+    },
+    {
+      "line_number": 12,
+      "raw": "2026-05-26 09:10:22 WARNING Port scan detected from 45.33.22.11 - 25 ports scanned in 3 seconds",
+      "timestamp": "2026-05-26 09:10:22",
+      "severity": "WARNING",
+      "severity_score": 2,
+      "ip_addresses": [
+        "45.33.22.11"
+      ],
+      "suspicious": [
+        "port_scan"
+      ]
+    },
+    {
+      "line_number": 13,
+      "raw": "2026-05-26 09:15:00 ERROR Failed login attempt from 45.33.22.11 - user: root, password: 123456",
+      "timestamp": "2026-05-26 09:15:00",
+      "severity": "ERROR",
+      "severity_score": 3,
+      "ip_addresses": [
+        "45.33.22.11"
+      ],
+      "suspicious": [
+        "password_spray"
+      ]
+    },
+    {
+      "line_number": 14,
+      "raw": "2026-05-26 09:20:45 INFO User 'admin' logged in from 10.0.0.5 - MFA: enabled",
+      "timestamp": "2026-05-26 09:20:45",
+      "severity": "INFO",
+      "severity_score": 1,
+      "ip_addresses": [
+        "10.0.0.5"
+      ],
+      "suspicious": []
+    },
+    {
+      "line_number": 15,
+      "raw": "2026-05-26 09:25:33 CRITICAL Unauthorized sudo attempt - user: www-data, command: /bin/bash",
+      "timestamp": "2026-05-26 09:25:33",
+      "severity": "CRITICAL",
+      "severity_score": 4,
+      "ip_addresses": [],
+      "suspicious": []
+    },
+    {
+      "line_number": 16,
+      "raw": "2026-05-26 09:30:17 WARNING Suspicious outbound connection - src: 10.0.0.5, dst: 185.130.5.253:4444",
+      "timestamp": "2026-05-26 09:30:17",
+      "severity": "WARNING",
+      "severity_score": 2,
+      "ip_addresses": [
+        "10.0.0.5",
+        "185.130.5.253"
+      ],
+      "suspicious": []
+    },
+    {
+      "line_number": 17,
+      "raw": "2026-05-26 09:35:02 INFO Firewall rule added - allow: 10.0.0.0/24, port: 443, action: ALLOW",
+      "timestamp": "2026-05-26 09:35:02",
+      "severity": "INFO",
+      "severity_score": 1,
+      "ip_addresses": [
+        "10.0.0.0"
+      ],
+      "suspicious": []
+    },
+    {
+      "line_number": 18,
+      "raw": "2026-05-26 09:40:55 ERROR IDS Alert - signature: ET WEB_SERVER Possible SQL Injection Attack",
+      "timestamp": "2026-05-26 09:40:55",
+      "severity": "ERROR",
+      "severity_score": 3,
+      "ip_addresses": [],
+      "suspicious": []
+    },
+    {
+      "line_number": 19,
+      "raw": "2026-05-26 09:45:12 WARNING XSS attempt detected - payload: <script>alert('XSS')</script>",
+      "timestamp": "2026-05-26 09:45:12",
+      "severity": "WARNING",
+      "severity_score": 2,
+      "ip_addresses": [],
+      "suspicious": [
+        "xss_attempt"
+      ]
+    },
+    {
+      "line_number": 20,
+      "raw": "2026-05-26 09:50:08 INFO System health check - CPU: 12%, RAM: 45%, Disk: 67%",
+      "timestamp": "2026-05-26 09:50:08",
+      "severity": "INFO",
+      "severity_score": 1,
+      "ip_addresses": [],
+      "suspicious": []
+    },
+    {
+      "line_number": 21,
+      "raw": "2026-05-26 09:55:44 ERROR API rate limit exceeded - key: xxxxxx, limit: 1000/hr, current: 1102",
+      "timestamp": "2026-05-26 09:55:44",
+      "severity": "ERROR",
+      "severity_score": 3,
+      "ip_addresses": [],
+      "suspicious": []
+    },
+    {
+      "line_number": 22,
+      "raw": "2026-05-26 10:00:00 CRITICAL Data exfiltration detected - 2.3GB transferred to unknown IP 185.130.5.253",
+      "timestamp": "2026-05-26 10:00:00",
+      "severity": "CRITICAL",
+      "severity_score": 4,
+      "ip_addresses": [
+        "185.130.5.253"
+      ],
+      "suspicious": []
+    },
+    {
+      "line_number": 23,
+      "raw": "2026-05-26 10:05:22 WARNING Brute force attack detected - 20 failed logins in 30s from 45.33.22.11",
+      "timestamp": "2026-05-26 10:05:22",
+      "severity": "WARNING",
+      "severity_score": 2,
+      "ip_addresses": [
+        "45.33.22.11"
+      ],
+      "suspicious": [
+        "password_spray"
+      ]
+    },
+    {
+      "line_number": 24,
+      "raw": "2026-05-26 10:10:15 INFO Scheduled maintenance started - services affected: auth, api, db",
+      "timestamp": "2026-05-26 10:10:15",
+      "severity": "INFO",
+      "severity_score": 1,
+      "ip_addresses": [],
+      "suspicious": []
+    },
+    {
+      "line_number": 25,
+      "raw": "2026-05-26 10:15:30 ERROR TLS handshake failed - client: 192.168.1.150, reason: invalid cipher",
+      "timestamp": "2026-05-26 10:15:30",
+      "severity": "ERROR",
+      "severity_score": 3,
+      "ip_addresses": [
+        "192.168.1.150"
+      ],
+      "suspicious": []
+    }
+  ]
+}

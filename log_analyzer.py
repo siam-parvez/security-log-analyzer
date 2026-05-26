@@ -7,7 +7,9 @@ Purpose: Parse security logs, extract IOCs, generate multiple report formats
 
 Usage:
     python3 log_analyzer.py --file sample.log --format json
+    python3 log_analyzer.py --file sample.log --format text --output report.txt
     python3 log_analyzer.py --file sample.log --format html --output report.html
+    python3 log_analyzer.py --file sample.log --format md --output report.md
     python3 log_analyzer.py --help
 """
 
@@ -22,7 +24,6 @@ from pathlib import Path
 # CONFIGURATION
 # ============================================================
 
-# Severity levels to look for
 SEVERITY_KEYWORDS = {
     "CRITICAL": 4,
     "ERROR": 3,
@@ -31,7 +32,6 @@ SEVERITY_KEYWORDS = {
     "DEBUG": 0
 }
 
-# Suspicious patterns (IOCs)
 SUSPICIOUS_PATTERNS = {
     "password_spray": r"(failed login|authentication failure).*(from|ip)",
     "command_injection": r"(cat /etc/passwd|id;|whoami|nc -e|bash -i)",
@@ -47,7 +47,6 @@ SUSPICIOUS_PATTERNS = {
 # ============================================================
 
 def parse_timestamp(line):
-    """Extract timestamp if present (supports multiple formats)"""
     patterns = [
         r'\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}',
         r'\d{2}/\w{3}/\d{4}:\d{2}:\d{2}:\d{2}',
@@ -60,10 +59,8 @@ def parse_timestamp(line):
     return "Unknown"
 
 def extract_ip_addresses(text):
-    """Extract all IPv4 addresses"""
     pattern = r'\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b'
     ips = re.findall(pattern, text)
-    # Filter out invalid IPs (like 999.999.999.999)
     valid_ips = []
     for ip in ips:
         parts = ip.split('.')
@@ -72,7 +69,6 @@ def extract_ip_addresses(text):
     return list(set(valid_ips))
 
 def get_severity(line):
-    """Determine severity level based on keywords"""
     line_upper = line.upper()
     for severity, score in SEVERITY_KEYWORDS.items():
         if severity in line_upper:
@@ -80,7 +76,6 @@ def get_severity(line):
     return "UNKNOWN", -1
 
 def detect_suspicious_activity(line):
-    """Check line against known suspicious patterns"""
     detected = []
     line_lower = line.lower()
     for pattern_name, pattern in SUSPICIOUS_PATTERNS.items():
@@ -89,7 +84,6 @@ def detect_suspicious_activity(line):
     return detected
 
 def parse_log_line(line, line_number):
-    """Parse a single log line and return structured data"""
     return {
         "line_number": line_number,
         "raw": line.strip(),
@@ -105,7 +99,6 @@ def parse_log_line(line, line_number):
 # ============================================================
 
 def analyze_log_file(file_path):
-    """Main analysis function"""
     if not Path(file_path).exists():
         raise FileNotFoundError(f"File not found: {file_path}")
     
@@ -117,7 +110,7 @@ def analyze_log_file(file_path):
             "file": file_path,
             "analyzed_at": datetime.now().isoformat(),
             "total_lines": len(lines),
-            "analyzer_version": "1.0.0"
+            "analyzer_version": "1.0.1"
         },
         "summary": {
             "severity_counts": {s: 0 for s in SEVERITY_KEYWORDS.keys()},
@@ -135,16 +128,13 @@ def analyze_log_file(file_path):
         parsed = parse_log_line(line, i)
         results["details"].append(parsed)
         
-        # Update summary counts
         severity = parsed["severity"]
         if severity in results["summary"]["severity_counts"]:
             results["summary"]["severity_counts"][severity] += 1
         
-        # Track IPs
         for ip in parsed["ip_addresses"]:
             all_ips.add(ip)
         
-        # Track suspicious events
         if parsed["suspicious"]:
             results["summary"]["suspicious_events"].append({
                 "line": i,
@@ -152,7 +142,6 @@ def analyze_log_file(file_path):
                 "text": parsed["raw"][:100]
             })
         
-        # Track severity score
         results["summary"]["severity_score_total"] += parsed["severity_score"]
     
     results["summary"]["unique_ips"] = list(all_ips)
@@ -165,7 +154,6 @@ def analyze_log_file(file_path):
 # ============================================================
 
 def generate_text_report(results):
-    """Generate plain text report"""
     s = results["summary"]
     m = results["metadata"]
     
@@ -191,8 +179,14 @@ SEVERITY SUMMARY
 IP ADDRESSES FOUND
 -----------------
 Total unique IPs: {s['total_ips']}
-{chr(10).join(['  • ' + ip for ip in s['unique_ips']]) if s['unique_ips'] else '  None'}
+"""
+    if s['unique_ips']:
+        for ip in s['unique_ips']:
+            report += f"  • {ip}\n"
+    else:
+        report += "  None\n"
 
+    report += f"""
 SUSPICIOUS EVENTS
 -----------------
 """
@@ -214,8 +208,17 @@ Risk Level: {"HIGH" if s['severity_score_total'] > m['total_lines'] * 2 else "ME
     return report
 
 def generate_json_report(results):
-    """Generate JSON report (machine readable)"""
     return json.dumps(results, indent=2)
+
+def escape_html(text):
+    """Escape HTML special characters to prevent XSS in reports"""
+    return (text
+        .replace('&', '&amp;')
+        .replace('<', '&lt;')
+        .replace('>', '&gt;')
+        .replace('"', '&quot;')
+        .replace("'", '&#39;')
+    )
 
 def generate_html_report(results):
     """Generate HTML report (browser friendly)"""
@@ -235,15 +238,15 @@ def generate_html_report(results):
         table {{ border-collapse: collapse; width: 100%; }}
         th, td {{ border: 1px solid #ddd; padding: 8px; text-align: left; }}
         th {{ background-color: #f2f2f2; }}
-        .severity-bar {{ background-color: #4CAF50; height: 20px; }}
+        pre {{ background-color: #f5f5f5; padding: 10px; overflow-x: auto; }}
     </style>
 </head>
 <body>
     <h1>Security Log Analysis Report</h1>
     
     <h2>Metadata</h2>
-    <p><strong>File:</strong> {m['file']}</p>
-    <p><strong>Analyzed:</strong> {m['analyzed_at']}</p>
+    <p><strong>File:</strong> {escape_html(m['file'])}</p>
+    <p><strong>Analyzed:</strong> {escape_html(m['analyzed_at'])}</p>
     <p><strong>Total lines:</strong> {m['total_lines']}</p>
     
     <h2>Severity Summary</h2>
@@ -251,7 +254,7 @@ def generate_html_report(results):
         <tr><th>Severity</th><th>Count</th></tr>
 """
     for severity, count in s["severity_counts"].items():
-        html += f"        <tr><td>{severity}</td><td>{count}</td></tr>\n"
+        html += f"        <tr><td class='{severity.lower()}'>{escape_html(severity)}</td><td>{count}</td></tr>\n"
     
     html += f"""
     </table>
@@ -260,7 +263,7 @@ def generate_html_report(results):
     <ul>
 """
     for ip in s["unique_ips"]:
-        html += f"        <li>{ip}</li>\n"
+        html += f"        <li><code>{escape_html(ip)}</code></li>\n"
     
     html += f"""
     </ul>
@@ -270,7 +273,7 @@ def generate_html_report(results):
     if s["suspicious_events"]:
         html += "    <ul>\n"
         for event in s["suspicious_events"]:
-            html += f"        <li><strong>Line {event['line']}:</strong> {', '.join(event['patterns'])}<br>{event['text']}</li>\n"
+            html += f"        <li><strong>Line {event['line']}:</strong> {', '.join(event['patterns'])}<br><pre>{escape_html(event['text'])}</pre></li>\n"
         html += "    </ul>\n"
     else:
         html += "    <p>None detected</p>\n"
@@ -287,6 +290,110 @@ def generate_html_report(results):
 """
     return html
 
+def generate_markdown_report(results):
+    """Generate Markdown report (perfect for GitHub, documentation, bug bounty reports)"""
+    s = results["summary"]
+    m = results["metadata"]
+    
+    # Calculate risk level emoji
+    risk_score = s['severity_score_total'] / (m['total_lines'] * 4)
+    if risk_score > 0.5:
+        risk_emoji = "🔴 HIGH"
+    elif risk_score > 0.25:
+        risk_emoji = "🟡 MEDIUM"
+    else:
+        risk_emoji = "🟢 LOW"
+    
+    report = f"""# Security Log Analysis Report
+
+## 📊 Metadata
+
+| Field | Value |
+|-------|-------|
+| **File** | `{m['file']}` |
+| **Analyzed** | `{m['analyzed_at']}` |
+| **Total lines** | `{m['total_lines']}` |
+| **Analyzer version** | `{m['analyzer_version']}` |
+
+---
+
+## 📈 Severity Summary
+
+| Severity | Count | Chart |
+|----------|-------|-------|
+"""
+    
+    for severity in ["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"]:
+        count = s["severity_counts"].get(severity, 0)
+        bar = "█" * min(count, 20)
+        report += f"| {severity} | {count} | `{bar}` |\n"
+    
+    report += f"""
+---
+
+## 🌐 IP Addresses Found
+
+**Total unique IPs:** `{s['total_ips']}`
+
+"""
+    if s['unique_ips']:
+        for ip in s['unique_ips']:
+            report += f"- `{ip}`\n"
+    else:
+        report += "> No IP addresses detected\n"
+    
+    report += f"""
+
+---
+
+## ⚠️ Suspicious Events
+
+**Total events:** `{len(s['suspicious_events'])}`
+
+"""
+    if s["suspicious_events"]:
+        for event in s["suspicious_events"]:
+            report += f"### Line {event['line']}\n"
+            report += f"- **Patterns:** `{', '.join(event['patterns'])}`\n"
+            report += f"- **Content:**\n"
+            report += f"  ```\n  {event['text']}\n  ```\n\n"
+    else:
+        report += "> No suspicious activity detected\n"
+    
+    report += f"""
+
+---
+
+## 🎯 Risk Assessment
+
+| Metric | Value |
+|--------|-------|
+| **Severity Score** | `{s['severity_score_total']} / {m['total_lines'] * 4}` |
+| **Risk Level** | {risk_emoji} |
+
+### Score Interpretation
+
+- **0–25%** : 🟢 Low risk – Routine activity
+- **25–50%** : 🟡 Medium risk – Requires investigation
+- **50%+** : 🔴 High risk – Immediate attention needed
+
+---
+
+## 📋 Raw Data (First 10 lines)
+
+```text
+"""
+    for detail in results["details"][:10]:
+        report += f"{detail['raw']}\n"
+    
+    report += f"""```
+
+---
+
+*Generated by [Siam's Security Log Analyzer](https://github.com/siam-parvez/security-log-analyzer) on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}*
+"""
+    return report
+
 # ============================================================
 # MAIN FUNCTION
 # ============================================================
@@ -294,27 +401,26 @@ def generate_html_report(results):
 def main():
     parser = argparse.ArgumentParser(
         description="Security Log Analyzer - Extract IOCs and generate reports",
-        epilog="Examples:\n  python3 log_analyzer.py -f sample.log\n  python3 log_analyzer.py -f sample.log -f json -o report.json"
+        epilog="Examples:\n  python3 log_analyzer.py -f sample.log\n  python3 log_analyzer.py -f sample.log -f json -o report.json\n  python3 log_analyzer.py -f sample.log -f md -o report.md"
     )
     parser.add_argument("-f", "--file", required=True, help="Path to log file")
-    parser.add_argument("-fmt", "--format", choices=["text", "json", "html"], default="text", help="Output format")
+    parser.add_argument("-fmt", "--format", choices=["text", "json", "html", "md"], default="text", help="Output format")
     parser.add_argument("-o", "--output", help="Output file (default: stdout)")
     
     args = parser.parse_args()
     
     try:
-        # Analyze
         results = analyze_log_file(args.file)
         
-        # Generate report
         if args.format == "json":
             report = generate_json_report(results)
         elif args.format == "html":
             report = generate_html_report(results)
+        elif args.format == "md":
+            report = generate_markdown_report(results)
         else:
             report = generate_text_report(results)
         
-        # Output
         if args.output:
             with open(args.output, 'w') as f:
                 f.write(report)

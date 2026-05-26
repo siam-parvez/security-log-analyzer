@@ -1,0 +1,25 @@
+2026-05-26 08:15:32 INFO User login successful from 192.168.1.100 - user: admin@example.com
+2026-05-26 08:17:45 ERROR Failed login attempt from 203.0.113.45 - user: unknown, password: admin123
+2026-05-26 08:18:02 WARNING Multiple failed attempts from 203.0.113.45 - 5 attempts in 60 seconds
+2026-05-26 08:20:11 ERROR Database connection failed - timeout after 30s, pool size exhausted
+2026-05-26 08:22:33 INFO Backup completed successfully - size: 2.4GB, duration: 45s
+2026-05-26 08:25:19 FAILED Authentication timeout from 198.51.100.22 - user: temp_user
+2026-05-26 08:30:00 CRITICAL Memory usage exceeds 90% - current: 94%, threshold: 90%
+2026-05-26 08:35:44 INFO User logout from 192.168.1.100 - user: admin@example.com
+2026-05-26 09:00:00 WARNING Suspicious command detected: cat /etc/passwd - from process: python3
+2026-05-26 09:01:15 ERROR Command execution failed: sudo rm -rf /tmp/* - permission denied
+2026-05-26 09:05:30 INFO Connection established from 10.0.0.5 - protocol: SSH, version: 2.0
+2026-05-26 09:10:22 WARNING Port scan detected from 45.33.22.11 - 25 ports scanned in 3 seconds
+2026-05-26 09:15:00 ERROR Failed login attempt from 45.33.22.11 - user: root, password: 123456
+2026-05-26 09:20:45 INFO User 'admin' logged in from 10.0.0.5 - MFA: enabled
+2026-05-26 09:25:33 CRITICAL Unauthorized sudo attempt - user: www-data, command: /bin/bash
+2026-05-26 09:30:17 WARNING Suspicious outbound connection - src: 10.0.0.5, dst: 185.130.5.253:4444
+2026-05-26 09:35:02 INFO Firewall rule added - allow: 10.0.0.0/24, port: 443, action: ALLOW
+2026-05-26 09:40:55 ERROR IDS Alert - signature: ET WEB_SERVER Possible SQL Injection Attack
+2026-05-26 09:45:12 WARNING XSS attempt detected - payload: <script>alert('XSS')</script>
+2026-05-26 09:50:08 INFO System health check - CPU: 12%, RAM: 45%, Disk: 67%
+2026-05-26 09:55:44 ERROR API rate limit exceeded - key: xxxxxx, limit: 1000/hr, current: 1102
+2026-05-26 10:00:00 CRITICAL Data exfiltration detected - 2.3GB transferred to unknown IP 185.130.5.253
+2026-05-26 10:05:22 WARNING Brute force attack detected - 20 failed logins in 30s from 45.33.22.11
+2026-05-26 10:10:15 INFO Scheduled maintenance started - services affected: auth, api, db
+2026-05-26 10:15:30 ERROR TLS handshake failed - client: 192.168.1.150, reason: invalid cipher
